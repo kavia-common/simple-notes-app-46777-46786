@@ -1,60 +1,60 @@
 :root {
-  /* Core dark palette — neutral blue/purple accent */
-  --theme-bg-canvas: #1A1B1F;       /* dark charcoal canvas */
-  --theme-bg-elevated: #21222A;     /* cards/surfaces */
-  --theme-bg-elev-1: #21222A;
-  --theme-bg-elev-2: #282931;
-  --theme-bg-elev-3: #2F3039;
-  --theme-bg-sidebar: #161719;
+  /* Core dark palette — Ocean Professional (blue primary, amber secondary) */
+  --theme-bg-canvas: #0F172A;       /* slate-900 tint for deeper ocean backdrop */
+  --theme-bg-elevated: #111827;     /* slate-800 surfaces */
+  --theme-bg-elev-1: #111827;
+  --theme-bg-elev-2: #0B1220;       /* deep ocean */
+  --theme-bg-elev-3: #151C2F;       /* slightly lighter elevation */
+  --theme-bg-sidebar: #0B1220;
 
-  --theme-text-primary: #F4F4F5;
-  --theme-text-secondary: #C9C9CF;
-  --theme-text-muted: #9C9CA3;
-  --theme-icon-muted: #8B8B92;
+  --theme-text-primary: #E6EDF3;
+  --theme-text-secondary: #B7C0CD;
+  --theme-text-muted: #93A0B4;
+  --theme-icon-muted: #8B9BB2;
 
-  --theme-border-subtle: #34353A;
-  --theme-border-strong: #43444A;
+  --theme-border-subtle: #1F2940;
+  --theme-border-strong: #27314A;
 
-  /* Primary brand – Blue/Purple */
-  --theme-primary-600: #5B6FDB;
-  --theme-primary-500: #6B7FEB;
-  --theme-primary-400: #8B9FFB;
-  --theme-primary-300: #A8B7FF;
-  --theme-primary-200: #C8D1FF;
-  --theme-primary-50:  #EEF0FF;
+  /* Primary brand – Ocean Blue & amber accent */
+  --theme-primary-600: #2563EB;
+  --theme-primary-500: #3B82F6;
+  --theme-primary-400: #60A5FA;
+  --theme-primary-300: #93C5FD;
+  --theme-primary-200: #BFDBFE;
+  --theme-primary-50:  #EFF6FF;
 
-  /* Accent aliases for backwards compatibility */
+  /* Accent aliases */
   --theme-accent: var(--theme-primary-500);
   --theme-accent-strong: var(--theme-primary-600);
 
-  /* Semantic */
-  --theme-success: #40D79E;
-  --theme-warning: #FFC75A;
-  --theme-danger:  #FF6B6B;
-  --theme-info:    #6EB9FF;
+  /* Semantic (amber as success-style accent per style guide) */
+  --theme-success: #F59E0B; /* amber */
+  --theme-warning: #F59E0B;
+  --theme-danger:  #EF4444;
+  --theme-info:    #60A5FA;
 
   /* Controls */
-  --theme-btn-primary-fg: #1A1B1F;
+  --theme-btn-primary-fg: #0B1220;
   --theme-btn-primary-bg: var(--theme-primary-500);
   --theme-btn-primary-hover: var(--theme-primary-600);
-  --theme-btn-primary-press: #4B5FCB;
+  --theme-btn-primary-press: #1D4ED8;
   --theme-btn-ghost-fg: var(--theme-text-secondary);
-  --theme-btn-ghost-hover-bg: var(--theme-bg-elev-2);
+  --theme-btn-ghost-hover-bg: var(--theme-bg-elev-3);
   --theme-chip-bg: var(--theme-bg-elev-2);
   --theme-chip-fg: var(--theme-text-secondary);
   --theme-chip-active-bg: var(--theme-bg-elev-3);
   --theme-chip-active-fg: var(--theme-text-primary);
 
   /* Focus and overlays */
-  --theme-focus-ring: var(--theme-primary-400);
-  --theme-overlay-ambient: linear-gradient(180deg, rgba(107,127,235,0.18) 0%, rgba(0,0,0,0) 55%);
+  --theme-focus-ring: var(--theme-primary-300);
+  --theme-overlay-ambient: linear-gradient(180deg, rgba(37,99,235,0.18) 0%, rgba(0,0,0,0) 55%);
 
-  /* Lines (generic fallbacks still supported) */
+  /* Lines */
   --line-subtle: var(--theme-border-subtle);
   --line: var(--theme-border-subtle);
   --line-strong: var(--theme-border-strong);
 
-  /* Deprecated/legacy tokens retained as fallbacks to new ones */
+  /* Deprecated/legacy tokens retained as fallbacks */
   --bg-canvas: var(--theme-bg-canvas);
   --bg-elevated: var(--theme-bg-elevated);
   --bg-muted: var(--theme-bg-elev-2);
@@ -64,16 +64,16 @@
   --text-inverted: #0D0F14;
   --text-link: var(--theme-primary-300);
 
-  /* Accent family retained for charts and cool highlights if needed */
+  /* Accent family retained */
   --accent-primary: var(--theme-primary-500);
   --accent-primary-600: var(--theme-primary-600);
   --accent-primary-400: var(--theme-primary-400);
-  --accent-secondary: #17D1D4;
-  --accent-warm: #FF5C8A;
+  --accent-secondary: #F59E0B; /* amber */
+  --accent-warm: #F59E0B;
 
-  /* Gradients: primary brand */
+  /* Gradients */
   --grad-primary: linear-gradient(135deg, var(--theme-primary-600) 0%, var(--theme-primary-400) 50%, var(--theme-primary-300) 100%);
-  --grad-hero: radial-gradient(1200px 600px at 60% -10%, rgba(107,127,235,0.22) 0%, rgba(139,159,251,0.15) 35%, rgba(26,27,31,0) 70%);
+  --grad-hero: radial-gradient(1200px 600px at 60% -10%, rgba(37,99,235,0.22) 0%, rgba(96,165,250,0.15) 35%, rgba(26,27,31,0) 70%);
 }
 
 /* Base */

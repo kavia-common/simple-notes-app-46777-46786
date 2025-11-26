@@ -30,6 +30,17 @@ css: |
 
 ---
 
+# Notes App
+A simple notes interface built for this deck. Create, edit, delete, and list notes. Data is stored locally in your browser (no backend).
+
+<NotesApp />
+
+<script setup>
+import NotesApp from './components/NotesApp.vue'
+</script>
+
+---
+
 # The Challenge
 
 <div class="problem-grid">
