@@ -6,29 +6,73 @@ import { defineConfig } from 'vite'
  * - Expose host to 0.0.0.0 so the container proxy can reach it.
  * - Keep permissive CORS headers only.
  *
- * Host blocking fix:
+ * Host blocking & HMR over proxy:
  * Vite can emit "Blocked request. This host (...) is not allowed." when proxied through
- * workspace gateways. To resolve, declare server.allowedHosts to include the exact
- * workspace host and several common internal hosts. This also helps HMR/websocket
- * to work through the proxy.
+ * workspace gateways. We include:
+ * - The exact workspace host (from env or known fallback).
+ * - Safe base domains used by the workspace (qa01.cloud.kavia.ai, cloud.kavia.ai).
+ * We also configure HMR to use the workspace host and wss so the websocket connects
+ * through the proxy.
  */
 export default defineConfig(({ command }) => {
   const isDev = command === 'serve'
 
-  // Exact workspace host reported in the error/screenshot
-  const WORKSPACE_HOST = 'vscode-internal-10406-qa.qa01.cloud.kavia.ai'
+  // Try to derive the workspace host from env first, else fallback to the known running container URL.
+  // Users can override with VITE_FRONTEND_URL to ensure correctness.
+  const fromEnvUrl =
+    process.env.VITE_FRONTEND_URL ||
+    process.env.FRONTEND_URL ||
+    process.env.PUBLIC_URL ||
+    ''
+  let derivedHost = ''
+  try {
+    if (fromEnvUrl) {
+      const u = new URL(fromEnvUrl)
+      derivedHost = u.hostname
+    }
+  } catch {
+    // ignore parse errors
+  }
 
-  // We can’t use wildcards here (Vite expects exact strings), so enumerate safe bases
-  // that commonly appear in the workspace/proxy flow.
+  // Fallback to the host we see in the running container metadata for this workspace.
+  // Work item indicates: https://vscode-internal-10406-qa.qa01.cloud.kavia.ai:3000
+  const FALLBACK_HOST = 'vscode-internal-10406-qa.qa01.cloud.kavia.ai'
+
+  // Prefer derived host if available; otherwise use fallback.
+  const WORKSPACE_HOST = derivedHost || FALLBACK_HOST
+
+  // Vite expects exact strings for allowedHosts, so enumerate likely values.
   const INTERNAL_ALLOWED = [
     WORKSPACE_HOST,
     'localhost',
     '127.0.0.1',
-    // Common internal domains used by the workspace proxy. Including base domains
-    // allows the proxy to pass Host headers for sub-resources like HMR/websocket upgrades.
+    // Common internal domains used by the workspace proxy.
     'qa01.cloud.kavia.ai',
     'cloud.kavia.ai',
   ]
+
+  // Optional: allow alternate vscode-internal-* frontends in the same environment
+  // by dynamically including common patterns we know about. Since allowedHosts must be exact,
+  // we include a few variants that may appear depending on port allocation or region.
+  const POSSIBLE_PREFIXES = [
+    'vscode-internal-',
+  ]
+  const POSSIBLE_SUFFIXES = [
+    '.qa01.cloud.kavia.ai',
+    '.cloud.kavia.ai',
+  ]
+  for (const pre of POSSIBLE_PREFIXES) {
+    for (const suf of POSSIBLE_SUFFIXES) {
+      const candidate = `${pre}10406-qa${suf}`
+      if (!INTERNAL_ALLOWED.includes(candidate)) INTERNAL_ALLOWED.push(candidate)
+    }
+  }
+
+  // Compute HMR origin and clientPort only when we can infer a proxy https port.
+  // In this workspace, pages are served over https with port present in URL (e.g., :3000 path-terminated by proxy).
+  // Let Vite infer port; we just set host/protocol to guide the websocket URL.
+  const hmrHost = WORKSPACE_HOST
+  const hmrProtocol = 'wss'
 
   return {
     server: {
@@ -49,8 +93,15 @@ export default defineConfig(({ command }) => {
       // Help websocket/HMR route through the proxy by setting the public host.
       // Keep port undefined so Slidev/Vite infer the running dev port.
       hmr: {
-        host: WORKSPACE_HOST,
-        protocol: 'wss',
+        host: hmrHost,
+        protocol: hmrProtocol,
+        // If a platform injects a different public port for client websocket, allow overriding via env.
+        // e.g. VITE_HMR_CLIENT_PORT=443
+        ...(process.env.VITE_HMR_CLIENT_PORT
+          ? { clientPort: Number(process.env.VITE_HMR_CLIENT_PORT) }
+          : {}),
+        // Allow forcing HMR origin if provided (rarely needed, but safe escape hatch).
+        ...(process.env.VITE_HMR_ORIGIN ? { origin: process.env.VITE_HMR_ORIGIN } : {}),
       },
     },
     // Define VITE_* access to avoid undefined during build when referenced
